@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/dashboard_ebi/db" VERSION="2026080500" COMMENT="XMLDB file for local_dashboard_ebi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_dashboard_matrix" COMMENT="Aturan matriks tag learning path per level jabatan">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="level_jabatan" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Tag level jabatan"/>
+        <FIELD NAME="kategori_tag" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Tag kelompok/kategori course"/>
+        <FIELD NAME="status_tag" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="open" SEQUENCE="false" COMMENT="Tag sifat course: open/closed"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
