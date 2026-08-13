@@ -3,17 +3,17 @@ defined('MOODLE_INTERNAL') || die();
 
 global $DB, $USER;
 
-// Ambil Seluruh Konfigurasi Plugin
+// 1. Ambil Seluruh Konfigurasi Plugin dari Settings
 $field_jabatan = get_config('local_dashboard_ebi', 'field_level_jabatan');
-$field_jabatan = !empty($field_jabatan) ? $field_jabatan : 'level_jabatan';
+$field_jabatan = !empty($field_jabatan) ? trim($field_jabatan) : 'level_jabatan';
 
 $field_atasan  = get_config('local_dashboard_ebi', 'field_atasan_langsung');
-$field_atasan  = !empty($field_atasan) ? $field_atasan : 'atasan_langsung';
+$field_atasan  = !empty($field_atasan) ? trim($field_atasan) : 'atasan_langsung';
 
 $manager_key   = get_config('local_dashboard_ebi', 'manager_key_type');
-$manager_key   = !empty($manager_key) ? $manager_key : 'username';
+$manager_key   = !empty($manager_key) ? trim($manager_key) : 'username';
 
-// Tentukan Nilai Identitas User Login Berdasarkan Config (Username / Email / ID Number)
+// Tentukan Nilai Identitas User Login Berdasarkan Settings (Username / Email / ID Number)
 $user_key_value = isset($USER->$manager_key) ? $USER->$manager_key : $USER->username;
 
 /**
@@ -27,14 +27,15 @@ function get_semua_bawahan_data_limited($atasan_key_value, $field_atasan, $field
         return $results;
     }
 
+    // Query SQL Dinamis sesuai field profile di settings.php
     $sql = "SELECT u.id, u.username, u.email, u.idnumber, u.firstname, u.lastname, 
-                   uid_jab.data AS level_jabatan, 
+                   COALESCE(uid_jab.data, 'unassigned') AS user_target_field, 
                    ? AS manager_key_val
               FROM {user} u
               JOIN {user_info_data} uid ON uid.userid = u.id
               JOIN {user_info_field} uif ON uif.id = uid.fieldid AND uif.shortname = ?
-         LEFT JOIN {user_info_data} uid_jab ON uid_jab.userid = u.id
-         LEFT JOIN {user_info_field} uif_jab ON uif_jab.id = uid_jab.fieldid AND uif_jab.shortname = ?
+         LEFT JOIN {user_info_field} uif_jab ON uif_jab.shortname = ?
+         LEFT JOIN {user_info_data} uid_jab ON uid_jab.userid = u.id AND uid_jab.fieldid = uif_jab.id
              WHERE LOWER(TRIM(uid.data)) = ? 
                AND u.deleted = 0 
                AND u.suspended = 0";
@@ -66,23 +67,25 @@ function get_semua_bawahan_data_limited($atasan_key_value, $field_atasan, $field
     return $results;
 }
 
-// 1. PANGGIL BAWAHAN DENGAN CONFIGURABLE PARAMETER
+// 2. PANGGIL BAWAHAN DENGAN CONFIGURABLE PARAMETER
 $team_members = get_semua_bawahan_data_limited($user_key_value, $field_atasan, $field_jabatan, $manager_key, 2, 3);
 
-// 2. KUMPULKAN DROPDOWN FILTER JABATAN
+// 3. KUMPULKAN DROPDOWN FILTER JABATAN / DIREKTORAT DINAMIS
 $available_jabatans = [];
 foreach ($team_members as $member) {
-    $jab = !empty($member->level_jabatan) ? strtolower(trim($member->level_jabatan)) : 'unassigned';
+    $jab = !empty($member->user_target_field) ? strtolower(trim($member->user_target_field)) : 'unassigned';
     $available_jabatans[$jab] = strtoupper($jab);
 }
 ksort($available_jabatans);
 
 $selected_jabatan_filter = optional_param('filter_team_jabatan', 'all', PARAM_TEXT);
 
-// 3. PROSES AGREGASI PERHITUNGAN MATRIKS BAWAHAN & STATISTIK GRAFIK
+// Label Kategori Header Dinamis
+$header_field_label = strtoupper(str_replace('_', ' ', $field_jabatan));
+
+// 4. PROSES AGREGASI PERHITUNGAN MATRIKS BAWAHAN & STATISTIK GRAFIK
 $team_report_data = [];
 
-// Variabel Agregasi Grafik
 $total_compliance_sum = 0;
 $count_team_members = 0;
 
@@ -92,13 +95,12 @@ $status_distribution = [
     'low'       => 0  // < 50%
 ];
 
-// Structural Data untuk Chart Kategori (Mandatory, Fundamental, dll)
-$category_stats = []; // Format: ['Mandatory' => ['target' => 10, 'completed' => 8]]
+$category_stats = [];
 
 foreach ($team_members as $member) {
-    $member_jabatan = !empty($member->level_jabatan) ? strtolower(trim($member->level_jabatan)) : 'unassigned';
+    $member_jabatan = !empty($member->user_target_field) ? strtolower(trim($member->user_target_field)) : 'unassigned';
 
-    // Apply Filter Jabatan
+    // Apply Filter Jabatan / Direktorat
     if ($selected_jabatan_filter !== 'all' && $member_jabatan !== $selected_jabatan_filter) {
         continue;
     }
@@ -209,15 +211,17 @@ foreach ($category_stats as $k_name => $k_data) {
 ?>
 
 <div class="container-fluid p-0 mb-5">
-    <!-- FILTER BAR LEVEL JABATAN TIM -->
+    <!-- FILTER BAR DINAMIS SESUAI FIELD SETTINGS -->
     <div class="card border-0 shadow-sm rounded-lg p-3 mb-4 bg-light">
         <form method="get" action="" class="form-inline justify-content-between">
             <input type="hidden" name="tab" value="team_learning_path">
             
             <div class="d-flex align-items-center">
-                <label class="font-weight-bold mr-2 text-dark small"><i class="fa fa-filter mr-1"></i> Filter Level Jabatan Bawahan:</label>
+                <label class="font-weight-bold mr-2 text-dark small">
+                    <i class="fa fa-filter mr-1"></i> Filter <?php echo $header_field_label; ?> Bawahan:
+                </label>
                 <select name="filter_team_jabatan" class="form-control form-control-sm mr-2" onchange="this.form.submit();">
-                    <option value="all">-- Semua Level Jabatan Tim --</option>
+                    <option value="all">-- Semua <?php echo $header_field_label; ?> Tim --</option>
                     <?php foreach ($available_jabatans as $jab_key => $jab_label): ?>
                         <option value="<?php echo htmlspecialchars($jab_key); ?>" <?php echo ($selected_jabatan_filter === $jab_key) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($jab_label); ?>
@@ -297,7 +301,7 @@ foreach ($category_stats as $k_name => $k_data) {
                         <thead class="thead-light">
                             <tr>
                                 <th>Nama Karyawan</th>
-                                <th>Level Jabatan</th>
+                                <th><?php echo $header_field_label; ?></th>
                                 <th>Atasan Langsung</th>
                                 <th class="text-center">Level Hirarki</th>
                                 <th class="text-center">Progress Pemenuhan</th>
@@ -337,7 +341,6 @@ foreach ($category_stats as $k_name => $k_data) {
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <!-- DIBUAT SUPPORT UNTUK BOOTSTRAP 4 DAN BOOTSTRAP 5 -->
                                         <button type="button" 
                                                 class="btn btn-outline-primary btn-sm" 
                                                 data-toggle="collapse" 
@@ -350,7 +353,6 @@ foreach ($category_stats as $k_name => $k_data) {
                                     </td>
                                 </tr>
                                 
-                                <!-- BARIS DETAIL YANG DIPERBAIKI -->
                                 <tr>
                                     <td colspan="7" class="p-0 border-0">
                                         <div class="collapse bg-light p-3" id="detail-user-<?php echo $row['userid']; ?>">
@@ -359,7 +361,7 @@ foreach ($category_stats as $k_name => $k_data) {
                                                     <i class="fa fa-list-alt mr-1"></i> Matriks Course: <?php echo htmlspecialchars($row['fullname']); ?>
                                                 </h6>
                                                 <?php if (empty($row['courses'])): ?>
-                                                    <small class="text-muted italic">Belum ada course yang di-tag untuk level jabatannya.</small>
+                                                    <small class="text-muted italic">Belum ada course yang di-tag untuk <?php echo strtolower($header_field_label); ?> ini.</small>
                                                 <?php else: ?>
                                                     <table class="table table-sm table-bordered bg-white mb-0" style="font-size: 0.8rem;">
                                                         <thead class="thead-light">
