@@ -2,7 +2,7 @@
 
 # Plugin Dashboard EBI for Moodle
 
-**Unified Dashboard EBI** adalah plugin lokal Moodle (`local_dashboard_ebi`) yang dirancang untuk menyediakan portal pembelajaran dan pemantauan pengembangan diri (*Learning & Development Portal*) yang terintegrasi secara komprehensif. 
+**Dashboard EBI** adalah plugin lokal Moodle (`local_dashboard_ebi`) yang dirancang untuk menyediakan portal pembelajaran dan pemantauan pengembangan diri (*Learning & Development Portal*) yang terintegrasi secara komprehensif. 
 
 Plugin ini mendukung visualisasi **Learning Path Individu**, pemantauan **Learning Path Tim (hingga 3 level hirarki)**, manajemen **Individual Development Plan (IDP)**, serta pemantauan **Sertifikasi Eksternal** secara dinamis berdasarkan data Custom Profile Field HR.
 
@@ -80,10 +80,8 @@ Sebelum anda memetakan matriks tag, psatikan anda telah memberikan TAG yang sesu
     **Tag Kategori Course**: Masukkan Tag Moodle untuk kategori (misal: mandatory, fundamental).  
     **Tag Status Access Course**: Pilih status sifat course (open atau closed).
 
-## 🛠️ Panduan untuk LMS Administrator
+## 🛠️ Panduan untuk end user / karyawan / peserta training
 
-### 1. Panduan untuk end user 
+### 1. Akses Dashboard
 1. Akses halaman dashboard EBI pada URL : ```/local/dashboard_ebi/index.php```
 2. Anda akan melihat course yang harus anda penuhi di level anda saat ini
-
-
