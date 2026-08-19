@@ -116,7 +116,7 @@ $compliance_pct = $total_courses > 0 ? round(($total_completed / $total_courses)
             
             <div class="text-center mt-3 pt-2 border-top">
                 <span class="h4 font-weight-bold text-success mb-0"><?php echo $compliance_pct; ?>%</span>
-                <small class="text-muted d-block">Modul Terpenuhi (<?php echo $total_completed; ?> / <?php echo $total_courses; ?>)</small>
+                <small class="text-muted d-block">Course Terpenuhi (<?php echo $total_completed; ?> / <?php echo $total_courses; ?>)</small>
             </div>
         </div>
     </div>
@@ -124,8 +124,8 @@ $compliance_pct = $total_courses > 0 ? round(($total_completed / $total_courses)
     <!-- Card Komposisi Kategori Pelatihan -->
     <div class="col-md-8 mb-3">
         <div class="card border-0 shadow-sm rounded-lg p-3 h-100 bg-white">
-            <h6 class="font-weight-bold text-dark mb-1">Komposisi Modul Pelatihan per Kategori</h6>
-            <small class="text-muted d-block mb-3">Jumlah modul yang teralokasi berdasarkan kategori tag</small>
+            <h6 class="font-weight-bold text-dark mb-1">Komposisi Course Pelatihan per Kategori</h6>
+            <small class="text-muted d-block mb-3">Jumlah course yang teralokasi berdasarkan kategori tag</small>
             
             <div style="height: 200px;">
                 <canvas id="chartCategories"></canvas>
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: catLabels,
             datasets: [{
-                label: 'Jumlah Modul',
+                label: 'Jumlah Course',
                 data: catValues,
                 backgroundColor: '#007bff',
                 borderRadius: 4
