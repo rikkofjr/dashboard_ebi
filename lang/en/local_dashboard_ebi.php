@@ -11,6 +11,9 @@ $string['setting_field_atasan_langsung_desc'] = 'Isikan shortname dari Custom Pr
 $string['setting_manager_key_type'] = 'Identitas Kunci Atasan';
 $string['setting_manager_key_type_desc'] = 'Pilih jenis data yang disimpan pada profile field Atasan Langsung bawahan (Username, Email, atau ID Number).';
 
+$string['dashboard_ebi:manage_matrix'] = 'Manage Matrix Course Tag';
+$string['dashboard_ebi:view_matrix'] = 'View Matrix Course Tag';
+
 $string['key_username'] = 'Username';
 $string['key_email'] = 'Email Address';
 $string['key_idnumber'] = 'ID Number / NIK';
