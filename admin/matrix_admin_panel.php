@@ -3,7 +3,7 @@ require_once(__DIR__ . '/../../../config.php');
 
 require_login();
 $context = context_system::instance();
-require_capability('moodle/site:config', $context);
+require_capability('local/dashboard_ebi:manage_matrix', $context);
 
 $url = new moodle_url('/local/dashboard_ebi/admin/matrix_admin_panel.php');
 $PAGE->set_url($url);
