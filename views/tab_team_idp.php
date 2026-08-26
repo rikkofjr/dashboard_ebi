@@ -285,21 +285,27 @@ $manage_idp_url = new moodle_url('/local/myidpebi/manage.php');
             <div class="col-md-4 mb-3">
                 <div class="card border-0 shadow-sm rounded-lg p-3 h-100 bg-white">
                     <h6 class="font-weight-bold text-dark mb-1">Status Pengajuan IDP Tim</h6>
-                    <small class="text-muted d-block mb-2">Distribusi Status Approval Bawahan</small>
+                    <small class="text-muted d-block mb-2">Jumlah Status IDP Bawahan</small>
 
-                    <div class="d-flex justify-content-around align-items-center my-auto">
-                        <div class="text-center">
-                            <span class="h4 font-weight-bold text-secondary mb-0"><?php echo $status_counts[0]; ?></span>
-                            <small class="text-muted d-block" style="font-size:0.7rem;">Pending</small>
-                        </div>
-                        <div class="text-center">
-                            <span class="h4 font-weight-bold text-warning mb-0"><?php echo $status_counts[1]; ?></span>
-                            <small class="text-muted d-block" style="font-size:0.7rem;">Disetujui</small>
-                        </div>
-                        <div class="text-center">
-                            <span class="h4 font-weight-bold text-success mb-0"><?php echo $status_counts[2]; ?></span>
-                            <small class="text-muted d-block" style="font-size:0.7rem;">Verified</small>
-                        </div>
+                    <div class="d-flex justify-content-around align-items-center my-auto flex-wrap">
+                        <?php 
+                        // Melakukan perulangan dinamis sesuai status yang tercatat
+                        foreach ($status_counts as $status_code => $count): 
+                            // Memanggil metadata status resmi dari lib.php
+                            $status_info = local_myidpebi_get_status_info($status_code);
+                            
+                            // Ekstraksi warna teks berdasarkan badge class bawaan (e.g., badge-warning -> text-warning)
+                            $text_color_class = str_replace('badge-', 'text-', $status_info->class);
+                        ?>
+                            <div class="text-center px-1 my-1">
+                                <span class="h4 font-weight-bold <?php echo $text_color_class; ?> mb-0">
+                                    <?php echo $count; ?>
+                                </span>
+                                <small class="text-muted d-block" style="font-size:0.7rem;">
+                                    <?php echo htmlspecialchars($status_info->text); ?>
+                                </small>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -361,9 +367,6 @@ $manage_idp_url = new moodle_url('/local/myidpebi/manage.php');
                 <h6 class="font-weight-bold text-dark mb-0">
                     <i class="fa fa-users text-primary mr-2"></i> Ringkasan Progress IDP Anggota Tim
                 </h6>
-                <a href="<?php echo $manage_idp_url; ?>" class="btn btn-outline-primary btn-sm" target="_blank">
-                    Buka Panel Approval <i class="fa fa-arrow-right ml-1"></i>
-                </a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
