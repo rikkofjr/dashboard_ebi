@@ -50,6 +50,12 @@ echo $OUTPUT->header();
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link border-0 shadow-sm rounded-top mr-1 <?php echo ($active_tab === 'training_external') ? 'active bg-white text-primary' : 'bg-light text-muted'; ?>" 
+               href="<?php echo new moodle_url($url, ['tab' => 'training_external']); ?>">
+                <i class="fa fa-address-book mr-2"></i> Training External
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link border-0 shadow-sm rounded-top mr-1 <?php echo ($active_tab === 'my_idp') ? 'active bg-white text-primary' : 'bg-light text-muted'; ?>" 
                href="<?php echo new moodle_url($url, ['tab' => 'my_idp']); ?>">
                 <i class="fa fa-id-card mr-2"></i> My IDP
@@ -67,6 +73,9 @@ echo $OUTPUT->header();
     <div class="tab-content">
         <?php
         switch ($active_tab) {
+            case 'training_external':
+                include(__DIR__ . '/views/tab_training_external.php');
+                break;
             case 'team_learning_path':
                 include(__DIR__ . '/views/tab_team_learning_path.php');
                 break;

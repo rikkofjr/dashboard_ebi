@@ -211,6 +211,20 @@ foreach ($category_stats as $k_name => $k_data) {
 ?>
 
 <div class="container-fluid p-0 mb-5">
+
+    <div class="row border-0 shadow-sm rounded-lg bg-light p-3 mb-4">
+        <div class="col-7">
+            Pantau penyelesaian course yang sudah dilakukan team anda
+        </div>
+        <div class="col-2">
+            <a href="/local/atasan_monitoring">
+                <span class="badge badge-primary p-2">
+                    <i class="fa fa-users mr-1"></i> Lihat Semua Course Team Anda
+                </span>
+            </a>
+        </div>
+    </div>
+    
     <!-- FILTER BAR DINAMIS SESUAI FIELD SETTINGS -->
     <div class="card border-0 shadow-sm rounded-lg p-3 mb-4 bg-light">
         <form method="get" action="" class="form-inline justify-content-between">

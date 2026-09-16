@@ -5,7 +5,7 @@ require_login();
 $context = context_system::instance();
 require_capability('local/dashboard_ebi:manage_matrix', $context);
 
-$url = new moodle_url('/local/dashboard_ebi/admin/matrix_admin_panel.php');
+$url = new moodle_url('/local/dashboard_ebi/admin/admin_panel_matrix_tag.php');
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title('Rule Mapping Learning Path');
